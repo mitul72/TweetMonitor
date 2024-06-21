@@ -1,14 +1,22 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-import re
 import time
 from dotenv import load_dotenv
 import os
 
 load_dotenv()  # Load the .env file
+
+
+def load_cookie(driver):
+    driver.add_cookie({
+        'name': 'auth_token',
+        'value': os.getenv('AUTH_TOKEN'),
+    })
+    driver.add_cookie({
+        'name': 'ct0',
+        'value': os.getenv('CT0'),
+    })
 
 
 def login():
@@ -26,22 +34,23 @@ def login():
         # Define the URL of the Twitter page you want to scrape
         url = "https://x.com/i/flow/login"
         driver.get(url)
-        time.sleep(4)
-        # Find the username and password fields
-        username_field = driver.find_element(
-            By.CSS_SELECTOR, 'input[autocomplete="username"]')
-        username_field.send_keys(os.getenv('EMAIL'))
-        button = driver.find_element(
-            By.XPATH, '//button[.//span[text()="Next"]]')
-        button.click()
-        time.sleep(2)
-        password_field = driver.find_element(
-            By.CSS_SELECTOR, 'input[autocomplete="current-password"]')
-        password_field.send_keys(os.getenv('PASSWORD'))
-        button = driver.find_element(
-            By.XPATH, '//button[.//span[text()="Log in"]]')
-        button.click()
-        time.sleep(5)
+        load_cookie(driver)
+
+        # # Find the username and password fields
+        # username_field = driver.find_element(
+        #     By.CSS_SELECTOR, 'input[autocomplete="username"]')
+        # username_field.send_keys(os.getenv('EMAIL'))
+        # button = driver.find_element(
+        #     By.XPATH, '//button[.//span[text()="Next"]]')
+        # button.click()
+        # time.sleep(2)
+        # password_field = driver.find_element(
+        #     By.CSS_SELECTOR, 'input[autocomplete="current-password"]')
+        # password_field.send_keys(os.getenv('PASSWORD'))
+        # button = driver.find_element(
+        #     By.XPATH, '//button[.//span[text()="Log in"]]')
+        # button.click()
+        # time.sleep(5)
         print("Logged in successfully")
     except Exception as e:
         print(f"Failed to log in: {e}")

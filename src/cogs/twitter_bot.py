@@ -1,11 +1,8 @@
+from utils.fetch_tweet_url import fetch_tweet
+from utils.login import login
 import discord
 from discord.ext import commands, tasks
-import snscrape.modules.twitter as sntwitter
-import os
-import certifi
-from utils.login import login
-
-os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
+import datetime
 
 
 class TwitterCog(commands.Cog):
@@ -23,50 +20,33 @@ class TwitterCog(commands.Cog):
         self.check_tweets.cancel()
 
     async def fetch_latest_tweet(self):
-        if self.username is None:
-            return []
 
-        tweets = []
-        scraper = sntwitter.TwitterUserScraper(self.username)
-        for tweet in scraper.get_items():
-            if self.last_tweet_id is not None and tweet.id <= self.last_tweet_id:
-                break
-            tweets.append({
-                'date': tweet.date,
-                'tweet_id': tweet.id,
-                'content': tweet.content,
-                'username': tweet.user.username,
-                'url': tweet.url
-            })
+        tweet_link = fetch_tweet(
+            self.driver, self.last_tweet_id, self.username)
 
-        if tweets:
-            # Update last tweet ID to the latest tweet fetched
-            print(f"Updating last tweet ID to {tweets[0]['tweet_id']}")
-            print(f"last tweet: {tweets[0]}")
-            self.last_tweet_id = tweets[0]['tweet_id']
-        return tweets
+        if tweet_link is not None:
+            self.last_tweet_id = tweet_link
+            return tweet_link
+        else:
+            return None
 
-    @tasks.loop(minutes=1.0)
+    @tasks.loop(minutes=10.0)
     async def check_tweets(self):
         if self.channel_id is None or self.role_id is None or self.username is None:
             return
 
         channel = self.bot.get_channel(self.channel_id)
         role = channel.guild.get_role(self.role_id)
-        new_tweets = await self.fetch_latest_tweet()
-        if new_tweets:
-            for tweet in new_tweets[::-1]:
-                print(f"Processing tweet: {tweet}")
-                embed = discord.Embed(
-                    title=f"New tweet from @{tweet['username']}",
-                    description=tweet['content'],
-                    url=tweet['url'],
-                    timestamp=tweet['date'],
-                    color=discord.Color.blue()
-                )
-                embed.set_author(
-                    name=tweet['username'], url=f"https://twitter.com/{tweet['username']}")
-                await channel.send(content=f"{role.mention}", embed=embed)
+        new_tweet = await self.fetch_latest_tweet()
+        if new_tweet is not None:
+            embed = discord.Embed(
+                title=new_tweet,
+                url=new_tweet,
+                timestamp=datetime.datetime.now(),
+                color=discord.Color.blue()
+            )
+            embed.set_author(name="DBSparkingNews")
+            await channel.send(content=f"{role.mention} [New tweet from @{self.username}]({new_tweet})")
 
     @commands.command(name='set_channel')
     @commands.has_permissions(administrator=True)

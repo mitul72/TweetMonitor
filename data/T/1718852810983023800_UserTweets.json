@@ -1,1 +1,0 @@
-{"errors":[{"message":"NumericString value expected. Received T","extensions":{"name":"MalformedVariablesError","source":"Client","code":366,"kind":"Validation","tracing":{"trace_id":"2514a2ad5b8f5ad2"}},"code":366,"kind":"Validation","name":"MalformedVariablesError","source":"Client","tracing":{"trace_id":"2514a2ad5b8f5ad2"}}]}

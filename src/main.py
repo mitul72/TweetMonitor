@@ -2,7 +2,10 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-from utils.login import login
+import sys
+
+# Add the project root directory to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 load_dotenv()  # Load the .env file
 
