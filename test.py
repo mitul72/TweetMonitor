@@ -6,17 +6,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 import re
 import time
 from selenium.webdriver.common.keys import Keys
+from utils.login import login
 
-# Set up the Selenium WebDriver with headless options
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # Run in headless mode
-chrome_options.add_argument("--disable-gpu")  # Disable GPU acceleration
-chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
-# # Overcome limited resource problems
-chrome_options.add_argument("--disable-dev-shm-usage")
-
-# Initialize the WebDriver
-driver = webdriver.Chrome(options=chrome_options)
+driver = login()
 
 # Define the URL of the Twitter page you want to scrape
 url = "https://twitter.com/DBSparkingZER0"
@@ -27,9 +19,10 @@ driver.get(url)
 # Give the page some time to load
 
 # driver.execute_script("window.scrollTo(0, 4000);")
-driver.implicitly_wait(10)
 body = driver.find_element(By.CSS_SELECTOR, 'body')
 body.send_keys(Keys.PAGE_DOWN)
+driver.implicitly_wait(10)
+time.sleep(2)
 
 # Find all tweet texts
 tweets = driver.find_elements(By.CSS_SELECTOR, '[data-testid="tweet"]')
