@@ -22,7 +22,7 @@ def load_cookie(driver):
 def login():
     # Set up the Selenium WebDriver with headless options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
+    # chrome_options.add_argument("--headless")  # Run in headless mode
     chrome_options.add_argument("--disable-gpu")  # Disable GPU acceleration
     chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
     # # Overcome limited resource problems

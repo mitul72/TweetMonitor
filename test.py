@@ -1,17 +1,17 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 import re
 import time
+import os
 from selenium.webdriver.common.keys import Keys
 from utils.login import login
+from dotenv import load_dotenv
+
+load_dotenv()
 
 driver = login()
 
 # Define the URL of the Twitter page you want to scrape
-url = "https://twitter.com/DBSparkingZER0"
+url = f"https://twitter.com/{os.getenv('TWEET_USER')}"
 
 # Navigate to the Twitter page
 driver.get(url)
@@ -39,6 +39,6 @@ for tweet in tweets:
     hrefs = [anchor.get_attribute('href') for anchor in anchor_tags]
     tweet_link = list(filter(tweet_link_pattern.match, hrefs))[0]
     tweet_text = tweet.text
-    print(f"Tweet: {tweet_link}")
+    print(f"Tweet: {tweet_link.replace('x.com', 'fxtwitter.com')}")
 # Close the WebDriver
 # driver.quit()
